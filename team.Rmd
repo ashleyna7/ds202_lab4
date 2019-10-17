@@ -1,0 +1,115 @@
+---
+title: "Lab 4"
+author: "Ashley Anderson & Hexiang Zhang"
+date: "10/24/2019"
+output: html_document
+---
+
+Owner Username: ashleyna7  
+Partner Username: hexzha  
+Repo Name: ds202_lab4  
+
+
+## Loading Data: Cyclone Football 
+
+```{r}
+#library(readxl)
+#defense <- read_excel('cyclonesFootball2018.xlsx', sheet='Defensive')
+#str(defense)
+```
+
+```{r,echo=FALSE,results='hide'}
+#offense <- read_excel('cyclonesFootball2018.xlsx', sheet='Offensive')
+#bio <- read_excel('cyclonesFootball2018.xlsx', sheet='Biography')
+```
+
+## Part one: Cleaning data
+The three Excel sheets are loaded into R but they are not useful to us before some cleaning. Manipulate the three imported data frames, so that the cleaned data satisfy the following:
+
+1. The player names and opponent names are factors.
+
+```{r}
+
+```
+
+2. All offensive and defensive statistics are numerical. The `Weight` column in Biography is also numeric. (Hint: look at `?mutate_at` if you want to save writing some code). 
+
+```{r}
+
+```
+
+3. Separate the `Height` column into two columns. Make sure the newly created columns are numeric. Then create one column that represents `Height` (Hint: Use a unit that works well). Drop any irrelavant columns from this process. 
+
+```{r}
+
+```
+
+4. By cleaning the three data frames in R, at the end of this step you should have the following three clean data frames: `defClean`, `offClean`, and `bioClean`. Print the structures of these data frames. **Make sure your data types make sense for each variable.**
+
+```{r}
+
+```
+
+
+## Part two: Tidying (A)
+For the following questions, work on the cleaned data frames `defClean`, `offClean`, and `bioClean`.
+
+1. Reformat the `defClean` data frame into a tidy format using `gather`. The type of statistic (Tackles_Solo, Tackles_ASST, etc) is added as a **new key column named `Statistic`.** 
+
+```{r}
+
+```
+
+2. Create a histogram for each defensive statistic (make sure to explore different binwidths). Use `facet_wrap` to draw all histograms in a single plot. What defensive skills are rare?
+
+```{r}
+
+```
+
+3. Did ISU have better defense against West Virginia or Kansas State? Answer this question by creating a scatterplot with x-axis being the number of solo tackles (by each player) against West Virginia, and y-axis being that against Kansas State. A large number of solo tackles indicates good defense. 
+
+      (**Hint**: From step 1 we have gathered our `defClean` into 4 columns. \
+       Now we only want to focus on solo tackles (hint...`filter`). 
+      Look at your data structure. What form do we need our data to have in order to easily answer this question? (hint...`spread`)). 
+      
+```{r}
+
+```
+      
+
+## Part two: Tidying  (B)
+Now let's turn our attention to the player biography `bioClean`.
+
+1. Separate the `Hometown` column into two columns, namely the city and the state. Print the first few rows of these two columns. (Hint: look at the `sep=` argument of `separate`)
+
+```{r}
+
+```
+
+2. How many players are there from each state?
+
+```{r}
+
+```
+
+
+## Part three: Joining data frames
+
+1. Find out where the offensive players are from by joining the offensive data and player biography data appropriately.
+
+```{r}
+
+```
+
+2. Is there a relationship between the weight of a player and the receiving yards (`Receiving_YDS`)?
+
+```{r}
+
+```
+
+3. Explore more. Raise a question that can be answered only by looking at two or more data frames. Then answer that question.
+
+```{r}
+
+```
+
