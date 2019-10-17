@@ -13,14 +13,16 @@ Repo Name: ds202_lab4
 ## Loading Data: Cyclone Football 
 
 ```{r}
-#library(readxl)
-#defense <- read_excel('cyclonesFootball2018.xlsx', sheet='Defensive')
-#str(defense)
+library(readxl)
+defense <- read_excel('cyclonesFootball2018.xlsx', sheet='Defensive')
+str(defense)
 ```
 
 ```{r,echo=FALSE,results='hide'}
-#offense <- read_excel('cyclonesFootball2018.xlsx', sheet='Offensive')
-#bio <- read_excel('cyclonesFootball2018.xlsx', sheet='Biography')
+offense <- read_excel('cyclonesFootball2018.xlsx', sheet='Offensive')
+str(offense)
+bio <- read_excel('cyclonesFootball2018.xlsx', sheet='Biography')
+str(bio)
 ```
 
 ## Part one: Cleaning data
@@ -29,25 +31,49 @@ The three Excel sheets are loaded into R but they are not useful to us before so
 1. The player names and opponent names are factors.
 
 ```{r}
+defClean <- defense
+offClean <- offense
+bioClean <- bio
 
+defClean$Name <- as.factor(defClean$Name)
+offClean$Name <- as.factor(offClean$Name)
+bioClean$Name <- as.factor(bioClean$Name)
+
+defClean$Opponent_Opponent <- as.factor(defClean$Opponent_Opponent)
+offClean$Opponent_Opponent <- as.factor(offClean$Opponent_Opponent)
 ```
 
 2. All offensive and defensive statistics are numerical. The `Weight` column in Biography is also numeric. (Hint: look at `?mutate_at` if you want to save writing some code). 
 
 ```{r}
+defense_names <- c(colnames(defClean[,3:11]))
+defClean[defense_names] <- sapply(defClean[defense_names],as.numeric)
 
+offense_names <- c(colnames(offClean[,3:12]))
+offClean[offense_names] <- sapply(offClean[offense_names],as.numeric)
+
+bioClean$Weight <- as.numeric(bioClean$Weight)
 ```
 
 3. Separate the `Height` column into two columns. Make sure the newly created columns are numeric. Then create one column that represents `Height` (Hint: Use a unit that works well). Drop any irrelavant columns from this process. 
 
 ```{r}
+library(tidyverse)
+bioClean <- bio %>%
+  separate(Height, c("Feet", "Inches")) %>%
+  mutate_each_(funs(as.numeric), c("Feet", "Inches")) %>%
+  group_by(Feet, Inches) %>%
+  mutate(Height=(Feet*12)+Inches)
 
+head(bioClean$Height)
 ```
 
 4. By cleaning the three data frames in R, at the end of this step you should have the following three clean data frames: `defClean`, `offClean`, and `bioClean`. Print the structures of these data frames. **Make sure your data types make sense for each variable.**
 
 ```{r}
-
+str(defClean)
+str(offClean)
+str(bioClean)
 ```
 
 
