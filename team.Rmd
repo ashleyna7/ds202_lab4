@@ -83,14 +83,17 @@ For the following questions, work on the cleaned data frames `defClean`, `offCle
 1. Reformat the `defClean` data frame into a tidy format using `gather`. The type of statistic (Tackles_Solo, Tackles_ASST, etc) is added as a **new key column named `Statistic`.** 
 
 ```{r}
-
+defClean <- defClean %>%
+  gather(key=Statistic, value=Value, 3:11)
 ```
 
 2. Create a histogram for each defensive statistic (make sure to explore different binwidths). Use `facet_wrap` to draw all histograms in a single plot. What defensive skills are rare?
 
 ```{r}
-
+ggplot(defClean, aes(Value, fill=Statistic)) + geom_histogram(breaks=seq(0,6,by=1)) + facet_wrap(~Statistic) + labs(title="Histogram of ISU Football Defensive Statistics", x="Value", y="Count")
 ```
+We can see that Turnover_FF, Turnover_FR, and Turnover_INT are all rare as the graph does not show any other bins than than 0 bin, indicating these defensive skills rarely happen. 
+
 
 3. Did ISU have better defense against West Virginia or Kansas State? Answer this question by creating a scatterplot with x-axis being the number of solo tackles (by each player) against West Virginia, and y-axis being that against Kansas State. A large number of solo tackles indicates good defense. 
 
@@ -99,9 +102,15 @@ For the following questions, work on the cleaned data frames `defClean`, `offCle
       Look at your data structure. What form do we need our data to have in order to easily answer this question? (hint...`spread`)). 
       
 ```{r}
+defClean %>%
+  filter(Statistic=="Tackles_Solo") %>% 
+  spread(key=Opponent_Opponent, value=Value) %>%
+  rename(KansasState = "Kansas State", WestVirginia = "West Virginia") %>%
+  drop_na(KansasState, WestVirginia) %>%
+  ggplot(aes(x=WestVirginia, y=KansasState)) + geom_point() + labs(title="Defensive Tackles: West Virginia vs. Kansas State", x="West Virginia", y="Kansas State") + xlim(0,9) + ylim(0,9)
 
 ```
-      
+From the plot, we can say that ISU has better defense against Kansas State than West Virginia. 
 
 ## Part two: Tidying  (B)
 Now let's turn our attention to the player biography `bioClean`.
