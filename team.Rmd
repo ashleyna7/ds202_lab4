@@ -91,7 +91,10 @@ defClean <- defClean %>%
 
 ```{r}
 ggplot(defClean, aes(Value, fill=Statistic)) + geom_histogram(breaks=seq(0,6,by=1)) + facet_wrap(~Statistic) + labs(title="Histogram of ISU Football Defensive Statistics", x="Value", y="Count")
+
+# Histigram of each defensive statistic facet wrapped together. The bins (value) represent how many times a statistic was recorded. Count represent number of players. 
 ```
+
 We can see that Turnover_FF, Turnover_FR, and Turnover_INT are all rare as the graph does not show any other bins than than 0 bin, indicating these defensive skills rarely happen. 
 
 
@@ -107,9 +110,11 @@ defClean %>%
   spread(key=Opponent_Opponent, value=Value) %>%
   rename(KansasState = "Kansas State", WestVirginia = "West Virginia") %>%
   drop_na(KansasState, WestVirginia) %>%
-  ggplot(aes(x=WestVirginia, y=KansasState)) + geom_point() + labs(title="Defensive Tackles: West Virginia vs. Kansas State", x="West Virginia", y="Kansas State") + xlim(0,9) + ylim(0,9)
+  ggplot(aes(x=WestVirginia, y=KansasState)) + geom_jitter(width = 0.2, height = 0.2) + labs(title="Defensive Tackles: West Virginia vs. Kansas State", x="West Virginia", y="Kansas State") + xlim(0,9) + ylim(0,9)
 
+# Scatterplot of the number of solo tackles by each ISU player between West Virginia and Kansas State. 
 ```
+
 From the plot, we can say that ISU has better defense against Kansas State than West Virginia. 
 
 ## Part two: Tidying  (B)
@@ -118,13 +123,21 @@ Now let's turn our attention to the player biography `bioClean`.
 1. Separate the `Hometown` column into two columns, namely the city and the state. Print the first few rows of these two columns. (Hint: look at the `sep=` argument of `separate`)
 
 ```{r}
-
+bioClean <- bioClean %>%
+  separate(Hometown, c("City", "State"), sep = ',')
+head(bioClean[,7:8])
 ```
 
 2. How many players are there from each state?
 
 ```{r}
+perState <- bioClean %>% 
+  group_by(State) %>%
+  tally()
 
+ggplot(perState, aes(x=State, y=n, fill = State)) + geom_bar(stat="identity") + labs(title = "Number of ISU Players' per Hometown State") + xlab("Players' Hometown State") + ylab("Count") + theme(axis.text.x=element_text(angle=90,hjust=1))
+
+# Bar graph of the number of ISU players' per hometown state.
 ```
 
 
