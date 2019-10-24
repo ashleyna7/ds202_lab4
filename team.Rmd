@@ -83,39 +83,32 @@ For the following questions, work on the cleaned data frames `defClean`, `offCle
 1. Reformat the `defClean` data frame into a tidy format using `gather`. The type of statistic (Tackles_Solo, Tackles_ASST, etc) is added as a **new key column named `Statistic`.** 
 
 ```{r}
-defClean <- defClean %>%
+defClean2 <- defClean %>%
   gather(key=Statistic, value=Value, 3:11)
 ```
 
 2. Create a histogram for each defensive statistic (make sure to explore different binwidths). Use `facet_wrap` to draw all histograms in a single plot. What defensive skills are rare?
 
 ```{r}
-ggplot(defClean, aes(Value, fill=Statistic)) + geom_histogram(breaks=seq(0,6,by=1)) + facet_wrap(~Statistic) + labs(title="Histogram of ISU Football Defensive Statistics", x="Value", y="Count")
-
-# Histigram of each defensive statistic facet wrapped together. The bins (value) represent how many times a statistic was recorded. Count represent number of players. 
+ggplot(defClean2, aes(Value, fill=Statistic)) + geom_histogram(breaks=seq(0,6,by=1)) + facet_wrap(~Statistic) + labs(title="Histogram of ISU Football Defensive Statistics", x="Value", y="Count")
 ```
 
-We can see that Turnover_FF, Turnover_FR, and Turnover_INT are all rare as the graph does not show any other bins than than 0 bin, indicating these defensive skills rarely happen. 
+Above is a histigram of each defensive statistic facet wrapped together. The bins (value) represent how many times a statistic was recorded. Count represent number of players. We can see that Turnover_FF, Turnover_FR, and Turnover_INT are all rare as the graph does not show any other bins than than 0 bin, indicating these defensive skills rarely happen. 
 
 
 3. Did ISU have better defense against West Virginia or Kansas State? Answer this question by creating a scatterplot with x-axis being the number of solo tackles (by each player) against West Virginia, and y-axis being that against Kansas State. A large number of solo tackles indicates good defense. 
 
-      (**Hint**: From step 1 we have gathered our `defClean` into 4 columns. \
-       Now we only want to focus on solo tackles (hint...`filter`). 
-      Look at your data structure. What form do we need our data to have in order to easily answer this question? (hint...`spread`)). 
       
 ```{r}
-defClean %>%
+defClean2 %>%
   filter(Statistic=="Tackles_Solo") %>% 
   spread(key=Opponent_Opponent, value=Value) %>%
   rename(KansasState = "Kansas State", WestVirginia = "West Virginia") %>%
   drop_na(KansasState, WestVirginia) %>%
   ggplot(aes(x=WestVirginia, y=KansasState)) + geom_jitter(width = 0.2, height = 0.2) + labs(title="Defensive Tackles: West Virginia vs. Kansas State", x="West Virginia", y="Kansas State") + xlim(0,9) + ylim(0,9)
-
-# Scatterplot of the number of solo tackles by each ISU player between West Virginia and Kansas State. 
 ```
 
-From the plot, we can say that ISU has better defense against Kansas State than West Virginia. 
+Above is a scatterplot of the number of solo tackles by each ISU player between West Virginia and Kansas State. From the plot, we can say that ISU has better defense against Kansas State than West Virginia. 
 
 ## Part two: Tidying  (B)
 Now let's turn our attention to the player biography `bioClean`.
@@ -136,28 +129,37 @@ perState <- bioClean %>%
   tally()
 
 ggplot(perState, aes(x=State, y=n, fill = State)) + geom_bar(stat="identity") + labs(title = "Number of ISU Players' per Hometown State") + xlab("Players' Hometown State") + ylab("Count") + theme(axis.text.x=element_text(angle=90,hjust=1))
-
-# Bar graph of the number of ISU players' per hometown state.
 ```
 
+Above is a bar graph of the count of ISU players per hometown state.
 
 ## Part three: Joining data frames
 
 1. Find out where the offensive players are from by joining the offensive data and player biography data appropriately.
 
 ```{r}
-
+off <- offClean %>%
+  inner_join(bioClean, by=c("Name"="Name"))
 ```
 
 2. Is there a relationship between the weight of a player and the receiving yards (`Receiving_YDS`)?
 
 ```{r}
-
+off %>%
+  group_by(Name) %>%
+  summarize(mean_receiving_yds = mean(Receiving_YDS, na.rm = TRUE)) %>%
+  mutate_at(vars(mean_receiving_yds), ~replace(., is.nan(.), 0)) %>%
+  left_join(off,bioClean,by=("Name"="Name")) %>%
+  ggplot(aes(x=Weight, y=mean_receiving_yds)) + geom_point() + labs(title="Weight by Mean Offensive Receiving Yards", x="Weight(lbs)", y="Mean Reveiving Yards")
 ```
+
+The scatterplot above shows the weight of each offensive player versus their mean recieving yards. Looking at the plot, there does not appear to be much of a relationship between the weight of an offensive player and the average amount of receiving yards a player has. 
 
 3. Explore more. Raise a question that can be answered only by looking at two or more data frames. Then answer that question.
 
 ```{r}
+
+  
 
 ```
 
