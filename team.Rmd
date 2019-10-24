@@ -157,9 +157,23 @@ The scatterplot above shows the weight of each offensive player versus their mea
 
 3. Explore more. Raise a question that can be answered only by looking at two or more data frames. Then answer that question.
 
+Do offensive or defensive players weight more?
+
 ```{r}
+off <- offClean %>%
+  inner_join(bioClean, by=c("Name"="Name"))
+def <- defClean %>%
+  inner_join(bioClean, by=c("Name"="Name"))
 
-  
+a = data.frame(group = "OFF", value = off$Weight)
+b = data.frame(group = "DEF", value = def$Weight)
 
+plot.data = rbind(a, b)
+plot.data$value = sapply(sapply(plot.data$value, as.character), as.numeric)
+
+ggplot(plot.data, aes(x = group, y = value, color = group)) + xlab("Groups") +  ylab("Weight") + labs(title = "Weight of Players on Offense and Defense") + geom_boxplot() 
 ```
 
+The boxplot above shows a boxplot of the weight of players on offense and defense. 
+
+We can see that the average weight of defensive players is heavier than offensive players. 
